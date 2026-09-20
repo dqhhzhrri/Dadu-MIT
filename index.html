@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lempar Dadu & Halaman Khusus Interaktif</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF7; /* Warna krem */
+        }
+
+        /* 3D Dice Scene */
+        .scene {
+            width: 140px;
+            height: 140px;
+            perspective: 600px;
+        }
+
+        .cube {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transform: translateZ(-70px);
+            transition: transform 0.1s linear;
+        }
+
+        .cube.spinning {
+            animation: spinDice 0.6s infinite linear;
+        }
+
+        @keyframes spinDice {
+            0% { transform: translateZ(-70px) rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+            100% { transform: translateZ(-70px) rotateX(360deg) rotateY(360deg) rotateZ(360deg); }
+        }
+
+        .cube-face {
+            position: absolute;
+            width: 140px;
+            height: 140px;
+            background: #DC2626; /* Warna merah */
+            border: 2px solid #B91C1C;
+            border-radius: 20px;
+            display: grid;
+            grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+            padding: 16px;
+            box-shadow: inset 0 6px 12px rgba(0,0,0,0.2), 0 10px 25px rgba(220, 38, 38, 0.3);
+        }
+
+        /* Dadu 3D face positioning */
+        .cube-face-1  { transform: rotateY(  0deg) translateZ(70px); }
+        .cube-face-6  { transform: rotateY(180deg) translateZ(70px); }
+        .cube-face-3  { transform: rotateY( 90deg) translateZ(70px); }
+        .cube-face-4  { transform: rotateY(-90deg) translateZ(70px); }
+        .cube-face-2  { transform: rotateX( 90deg) translateZ(70px); }
+        .cube-face-5  { transform: rotateX(-90deg) translateZ(70px); }
+
+        /* Titik Dadu Putih */
+        .dot {
+            background-color: #FFFFFF;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            align-self: center;
+            justify-self: center;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        /* Helper grid placement classes for dots */
+        .dot-1 { grid-area: 2 / 2 / 3 / 3; }
+        .dot-2-1 { grid-area: 1 / 3 / 2 / 4; }
+        .dot-2-2 { grid-area: 3 / 1 / 4 / 2; }
+        .dot-3-1 { grid-area: 1 / 3 / 2 / 4; }
+        .dot-3-2 { grid-area: 2 / 2 / 3 / 3; }
+        .dot-3-3 { grid-area: 3 / 1 / 4 / 2; }
+        .dot-4-1 { grid-area: 1 / 1 / 2 / 2; }
+        .dot-4-2 { grid-area: 1 / 3 / 2 / 4; }
+        .dot-4-3 { grid-area: 3 / 1 / 4 / 2; }
+        .dot-4-4 { grid-area: 3 / 3 / 4 / 4; }
+        .dot-5-1 { grid-area: 1 / 1 / 2 / 2; }
+        .dot-5-2 { grid-area: 1 / 3 / 2 / 4; }
+        .dot-5-3 { grid-area: 2 / 2 / 3 / 3; }
+        .dot-5-4 { grid-area: 3 / 1 / 4 / 2; }
+        .dot-5-5 { grid-area: 3 / 3 / 4 / 4; }
+        .dot-6-1 { grid-area: 1 / 1 / 2 / 2; }
+        .dot-6-2 { grid-area: 1 / 3 / 2 / 4; }
+        .dot-6-3 { grid-area: 2 / 1 / 3 / 2; }
+        .dot-6-4 { grid-area: 2 / 3 / 3 / 4; }
+        .dot-6-5 { grid-area: 3 / 1 / 4 / 2; }
+        .dot-6-6 { grid-area: 3 / 3 / 4 / 4; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between items-center text-zinc-800 selection:bg-red-200">
+
+    <!-- ================= HALAMAN 1: HOME (UTAMA) ================= -->
+    <div id="pageHome" class="w-full min-h-screen flex flex-col justify-between items-center">
+        <header class="w-full py-6 px-8 text-center">
+            <h1 class="text-2xl font-bold tracking-tight text-zinc-900">Dadu MIT</h1>
+            <p class="text-sm text-zinc-500 mt-1">Acak perkanalan MIT mu dengan sekali lemparan</p>
+        </header>
+
+        <main class="flex flex-col items-center justify-center flex-grow px-4 w-full max-w-md">
+            <!-- Container Dadu -->
+            <div class="mb-12 flex items-center justify-center">
+                <div class="scene">
+                    <div class="cube" id="diceCube">
+                        <!-- Sisi 1 -->
+                        <div class="cube-face cube-face-1"><div class="dot dot-1"></div></div>
+                        <!-- Sisi 2 -->
+                        <div class="cube-face cube-face-2"><div class="dot dot-2-1"></div><div class="dot dot-2-2"></div></div>
+                        <!-- Sisi 3 -->
+                        <div class="cube-face cube-face-3"><div class="dot dot-3-1"></div><div class="dot dot-3-2"></div><div class="dot dot-3-3"></div></div>
+                        <!-- Sisi 4 -->
+                        <div class="cube-face cube-face-4"><div class="dot dot-4-1"></div><div class="dot dot-4-2"></div><div class="dot dot-4-3"></div><div class="dot dot-4-4"></div></div>
+                        <!-- Sisi 5 -->
+                        <div class="cube-face cube-face-5"><div class="dot dot-5-1"></div><div class="dot dot-5-2"></div><div class="dot dot-5-3"></div><div class="dot dot-5-4"></div><div class="dot dot-5-5"></div></div>
+                        <!-- Sisi 6 -->
+                        <div class="cube-face cube-face-6"><div class="dot dot-6-1"></div><div class="dot dot-6-2"></div><div class="dot dot-6-3"></div><div class="dot dot-6-4"></div><div class="dot dot-6-5"></div><div class="dot dot-6-6"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tombol Lempar -->
+            <button id="rollBtn" onclick="rollDice()" class="w-full py-4 px-8 bg-red-600 hover:bg-red-700 active:scale-95 transition-all duration-200 text-white font-semibold text-lg rounded-2xl shadow-lg shadow-red-600/30 flex items-center justify-center gap-2 cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                LEMPAR
+            </button>
+        </main>
+
+
+        <footer class="w-full py-4 text-center text-xs text-zinc-400">
+            &copy; 2026 Dadu MIT. All rights reserved.
+        </footer>
+    </div>
+
+    <!-- NOTIFIKASI POPUP (Semi-transparan dengan teks hitam) -->
+    <div id="modalOverlay" class="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300 z-50">
+        <div id="modalContent" class="bg-white/85 backdrop-blur-md border border-white/40 shadow-2xl rounded-3xl p-8 max-w-sm w-full text-center transform scale-95 transition-all duration-300">
+            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4 text-red-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                </svg>
+            </div>
+            <h3 class="text-xl font-bold text-zinc-900 mb-2">Hasil Lemparan</h3>
+            <p id="modalText" class="text-lg font-medium text-black mb-6">Kamu terpilih dengan nomer ...</p>
+            <button onclick="goToResultPage()" class="w-full py-3 bg-zinc-900 hover:bg-zinc-800 text-white font-medium rounded-xl transition-colors duration-200 cursor-pointer">
+                Lihat templetku
+            </button>
+        </div>
+    </div>
+
+    <!-- ================= HALAMAN KHUSUS (Dinamis untuk Angka 1 sampai 6) ================= -->
+    <div id="pageResult" class="hidden w-full min-h-screen flex flex-col justify-between items-center p-6">
+        <header class="w-full py-4 text-center">
+            <span id="badgeNumber" class="inline-block px-4 py-1.5 bg-red-100 text-red-600 font-semibold text-sm rounded-full mb-2">Nomor Terpilih</span>
+            <h2 id="pageTitle" class="text-2xl font-bold text-zinc-900">Halaman Tempalte</h2>
+        </header>
+
+        <main class="flex flex-col items-center justify-center flex-grow w-full max-w-lg my-auto">
+            <!-- Kotak Center -->
+            <div class="bg-white/90 backdrop-blur-md border border-zinc-200/80 shadow-xl rounded-3xl p-8 w-full text-center transition-all">
+                <!-- ICON / LOGO GIF KUSTOM -->
+                <div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                    <img src="Coolemoji.gif" alt="Cool Emoji" class="w-full h-full object-contain drop-shadow-md">
+                </div>
+                
+                <h3 class="text-xl font-bold text-zinc-900 mb-1">Selamat ini Templet perkenalan MIT mu!!</h3>
+                <p class="text-xs text-zinc-400 mb-6">Jangan curang loo yaa.. jangan refresh halaman!!</p>
+
+                <!-- Kotak Teks yang bisa di-custom langsung (Editable) -->
+                <div id="editableIntro" contenteditable="true" class="bg-zinc-50 border border-zinc-200 rounded-2xl p-4 text-zinc-700 text-base leading-relaxed focus:outline-none focus:ring-2 focus:ring-red-500/50 min-h-[140px] text-left shadow-inner">
+                    <!-- Teks default akan diisi oleh javascript -->
+                </div>
+
+            </div>
+        </main>
+
+        <footer class="w-full py-4 text-center text-xs text-zinc-400">
+            &copy; 2026 Interactive Dice. All rights reserved.
+        </footer>
+    </div>
+
+    <script>
+        const diceCube = document.getElementById('diceCube');
+        const rollBtn = document.getElementById('rollBtn');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modalContent = document.getElementById('modalContent');
+        const modalText = document.getElementById('modalText');
+        
+        const pageHome = document.getElementById('pageHome');
+        const pageResult = document.getElementById('pageResult');
+        const badgeNumber = document.getElementById('badgeNumber');
+        const pageTitle = document.getElementById('pageTitle');
+        const editableIntro = document.getElementById('editableIntro');
+
+        let currentRandomNum = 1;
+
+        // Penyimpanan teks kustom untuk masing-masing halaman (1 sampai 6)
+        const customTexts = {
+            1: "- Nama <br><ul><li>- Asal </li><li>- Hobi </li><li>- Hewan kesukaan dan apa alasannya? </li><li>- kalo misal kamu punya satu kesempatan untuk ngecheat, kamu mau cheat apa dan mengapa? </li><li>- sebutkan 3 hal yang membuatmu malas melakukan sesuatu di minggu ini! </li><li>- super hero favoritmu apa? </li></ul>",
+            2: "- Nama <br><ul><li>- Asal </li><li>- Hobi </li><li>- kalo semua hewan bisa dipelihara, mau pelihara apa? </li><li>- kalo kamu sebelum lahir kedunia dikasi 2 pilihan keluarga.. pilihan 1, keluargamu kaya tapi penuh dengan kelicikan.. pilihan 2, keluargamu biasa-biasa aja tapi rukun dan saling bantu saat susah ataupun senang.. kamu pilih mana dan mengapa? </li><li>- Pekerjaan impianmu waktu masih kecil apa? </li><li>- teman paling ngeselin di IT siapa? knpa milih dia? </li></ul>",
+            3: "- Nama <br><ul><li>- Asal </li><li>- Hobi </li><li>- kalo dunia ini cmn ada kamu dan 1 org lagi dan kamu disuruh milih 1 orang di IT kamu mau milih siapa dan mengapa? </li><li>- kalo misal kamu punya satu kesempatan untuk ngecheat, kamu mau cheat apa dan mengapa? </li><li>- sebutkan 3 hal random yang yang sudah kamu lakukan di sekitar IT akhir-akhir ini! </li><li>- Cowo/cewe idaman kmu yng kyk gimana? </li></ul>",
+            4: "- Nama <br><ul><li>- Asal </li><li>- Hobi </li><li>- kalo kamu bisa mendesain ulang kurikulum mata kuliah di IT ITS semenarik mungkin, mata kuliah apa yang mau kamu hapus atau tambahkan, alasannya apa? </li><li>- Makanan kantin ITS favoritmu apa dan mengapa? </li><li>- sebutkan 3 barang paling gak penting tapi wajib yang selalu ada di dalam tasmu! </li><li>- Lagu atau playlist apa yang paling ampuh nemenin kamu pas lagi ngoding atau ngerjain tugas mepet deadline? </li></ul>",
+            5: "- Nama <br><ul><li>- Asal </li><li>- Hobi </li><li>- kalo kamu tiba-tiba terdampar di pulau terpencil bareng 2 dosen IT ITS, siapa yang kamu pilih dan apa alasannya supaya bisa bertahan hidup? </li><li>- Momen paling bikin jantungan atau panik pas lagi praktikum/tugas besar kemarin apa ceritanya? </li><li>- kalau hidupmu punya tombol 'Undo' kayak di keyboard, momen apa di minggu ini yang pengen banget kamu undo? </li><li>- Sebutkan satu hal receh yang bisa bikin kamu ketawa ngakak sendirian tengah malam! </li></ul>",
+            6: "- Nama <br><ul><li>- Asal </li><li>- Hobi </li><li>- kalau kamu dikasih kekuatan super buat nge-debug hidup seseorang di ruangan ini tanpa error, siapa orang itu dan bug apa yang mau kamu perbaiki? </li><li>- Pengalaman paling apes atau sial tapi pas diigat-ingat malah bikin senyum-senyum sendiri apa? </li><li>- kalau kamu jadi ketua angkatan IT dalam 1 hari, gebrakan absurd apa yang bakal kamu lakuin pertama kali? </li><li>- Kasih satu kalimat quotes paling bijak (atau paling ngawur) buatanmu sendiri buat anak-anak IT yang lain! </li></ul>",
+        };
+
+        // Preset rotasi 3D untuk tiap sisi angka dadu
+        const rotations = {
+            1: 'rotateX(0deg) rotateY(0deg)',
+            2: 'rotateX(-90deg) rotateY(0deg)',
+            3: 'rotateX(0deg) rotateY(-90deg)',
+            4: 'rotateX(0deg) rotateY(90deg)',
+            5: 'rotateX(90deg) rotateY(0deg)',
+            6: 'rotateX(180deg) rotateY(0deg)'
+        };
+
+        function rollDice() {
+            rollBtn.disabled = true;
+            rollBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+            diceCube.classList.add('spinning');
+            diceCube.style.transform = 'translateZ(-70px)';
+
+            setTimeout(() => {
+                currentRandomNum = Math.floor(Math.random() * 6) + 1;
+
+                diceCube.classList.remove('spinning');
+                diceCube.style.transform = `translateZ(-70px) ${rotations[currentRandomNum]}`;
+
+                setTimeout(() => {
+                    modalText.innerText = `Kamu terpilih dengan nomer ${currentRandomNum}`;
+                    modalOverlay.classList.remove('opacity-0', 'pointer-events-none');
+                    modalContent.classList.remove('scale-95');
+                    modalContent.classList.add('scale-100');
+                }, 400);
+
+            }, 3000);
+        }
+
+        function goToResultPage() {
+            closeModal();
+            loadPageContent(currentRandomNum);
+        }
+
+        function goToSpecificPage(num) {
+            currentRandomNum = num;
+            loadPageContent(num);
+        }
+
+        function loadPageContent(num) {
+            badgeNumber.innerText = `Nomor Terpilih: ${num}`;
+            pageTitle.innerText = `Halaman Khusus #${num}`;
+            
+            editableIntro.innerHTML = customTexts[num];
+
+            pageHome.classList.add('hidden');
+            pageResult.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            modalOverlay.classList.add('opacity-0', 'pointer-events-none');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+
+            rollBtn.disabled = false;
+            rollBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+
+        function saveCustomText() {
+            customTexts[currentRandomNum] = editableIntro.innerHTML;
+            alert(`Teks perkenalan untuk Halaman Nomor ${currentRandomNum} berhasil disimpan!`);
+        }
+
+        function goHome() {
+            pageResult.classList.add('hidden');
+            pageHome.classList.remove('hidden');
+
+            rollBtn.disabled = false;
+            rollBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            
+            diceCube.style.transform = 'translateZ(-70px) ' + rotations[1];
+        }
+    </script>
+</body>
+</html>
